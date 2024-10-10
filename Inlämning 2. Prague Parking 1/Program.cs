@@ -41,7 +41,7 @@ while (!exit) // True nu
     }
     if (!exit)
     {
-        Console.WriteLine("Tryck valfri för att fortsätta:");
+        Console.WriteLine("Any key to continue: ");
         Console.ReadLine();
     }
 }
