@@ -41,7 +41,7 @@ while (!exit) // True nu
     }
     if (!exit)
     {
-        Console.WriteLine("Any key to continue: ");
+        Console.WriteLine("Press any key to continue: ");
         Console.ReadLine();
     }
 }
