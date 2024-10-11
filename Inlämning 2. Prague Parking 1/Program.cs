@@ -1,3 +1,4 @@
+
 ﻿
 
 string[] parkingSpaces = new string[101];
@@ -22,13 +23,21 @@ while (!exit) // True nu
             //ParkVehicle();
             break;
         case "2":
+<<<<<<< HEAD
             MoveVehicle();
+=======
+            //MoveVehicle();
+>>>>>>> 9764db1f41cbbbd68b28431bc3dd83862e2d3b4d
             break;
         case "3":
             //GetVehicle(); eller RemoveVehicle();
             break;
         case "4":
+<<<<<<< HEAD
             //SearchVehicle();
+=======
+            //SearchVecicle();
+>>>>>>> 9764db1f41cbbbd68b28431bc3dd83862e2d3b4d
             break;
         case "5":
             //ShowParkingSpaces();
@@ -42,10 +51,15 @@ while (!exit) // True nu
     }
     if (!exit)
     {
+
         Console.WriteLine("Press any for continue:");
+
+        Console.WriteLine("Press any key to continue: ");
+
         Console.ReadLine();
     }
 }
+
 
 
 
@@ -89,9 +103,15 @@ void MoveVehicle()
     }
 }
 
+
+//ParkVehicle();
+
+//MoveVehicle();
+
 //GetVehicle(); eller RemoveVehicle();
 
 //SearchVecicle();
+
 
 //ShowParkingSpaces();
 
@@ -112,4 +132,7 @@ int FindVehicle(string regNr) // ändra om regNr
     return -1;
 
 }
+
+
+//ShowParkingSpaces();
 
