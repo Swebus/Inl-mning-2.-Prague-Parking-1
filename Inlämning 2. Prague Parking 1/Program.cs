@@ -23,21 +23,13 @@ while (!exit) // True nu
             //ParkVehicle();
             break;
         case "2":
-<<<<<<< HEAD
             MoveVehicle();
-=======
-            //MoveVehicle();
->>>>>>> 9764db1f41cbbbd68b28431bc3dd83862e2d3b4d
             break;
         case "3":
             //GetVehicle(); eller RemoveVehicle();
             break;
         case "4":
-<<<<<<< HEAD
             //SearchVehicle();
-=======
-            //SearchVecicle();
->>>>>>> 9764db1f41cbbbd68b28431bc3dd83862e2d3b4d
             break;
         case "5":
             //ShowParkingSpaces();
