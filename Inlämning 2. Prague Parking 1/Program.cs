@@ -20,7 +20,8 @@ while (!exit) // True nu
     switch (choice)
     {
         case "1":
-            //ParkVehicle();
+            
+            parkVehicle();
             break;
         case "2":
             MoveVehicle();
@@ -57,6 +58,65 @@ while (!exit) // True nu
 
 
 //ParkVehicle();
+
+
+void parkVehicle()
+{
+    string vehicleType;
+    Console.Write("Enter 1 for mc or 2 for car: ");
+    string vehicleTypeInput = Console.ReadLine();
+    if (vehicleTypeInput == "1")
+    {
+        vehicleType = "mc";
+    }
+    else if (vehicleTypeInput == "2")
+    {
+        vehicleType = "bl";
+    }
+    else
+    {
+        vehicleType = "0";
+    }
+    Console.Write("Enter vehicle registration number: ");
+    string regNumber = Console.ReadLine();
+    if ((regNumber.Length > 10))
+    {
+        Console.WriteLine("Registration number too long! Returning to main menu.");
+        //break; 
+    }
+    string vehicleDesignation = vehicleType + "#" + regNumber;
+    string checkstring;
+    for (int i = 1; i < parkingSpaces.Length; i++)
+    {
+        checkstring = parkingSpaces[i];
+        if (vehicleDesignation.Contains("mc"))
+        {
+            if (checkstring == null)
+            {
+                parkingSpaces[i] = vehicleDesignation;
+                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                break;
+            }
+            else if ((checkstring.Length > 0) && (checkstring.Length <= 15))
+            {
+                parkingSpaces[i] = parkingSpaces[i] + "|" + vehicleDesignation;
+                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                break;
+            }
+        }
+        else
+        {
+            if (checkstring == null)
+            {
+                parkingSpaces[i] = vehicleDesignation;
+                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                break;
+            }
+        }
+    }
+}
+
+
 
 
 void MoveVehicle()
