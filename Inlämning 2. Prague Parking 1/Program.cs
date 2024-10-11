@@ -1,7 +1,8 @@
-﻿// Vårt spar plats
-string[] parkingSpaces = new string[100];
+﻿
 
-// App system
+string[] parkingSpaces = new string[101];
+
+
 bool exit = false;
 while (!exit) // True nu
 {
@@ -21,13 +22,13 @@ while (!exit) // True nu
             //ParkVehicle();
             break;
         case "2":
-            //MoveVehicle();
+            MoveVehicle();
             break;
         case "3":
             //GetVehicle(); eller RemoveVehicle();
             break;
         case "4":
-            //SearchVecicle();
+            //SearchVehicle();
             break;
         case "5":
             //ShowParkingSpaces();
@@ -41,20 +42,74 @@ while (!exit) // True nu
     }
     if (!exit)
     {
-        Console.WriteLine("Tryck valfri för att fortsätta:");
+        Console.WriteLine("Press any for continue:");
         Console.ReadLine();
     }
 }
 
 
-// Våra metoder vad dom ska utföra.
+
 
 //ParkVehicle();
 
-//MoveVehicle();
+
+void MoveVehicle()
+{
+    Console.WriteLine("Type Registration number for move vehicle:  ");
+    string regNr = Console.ReadLine();
+
+    int currentSpace = FindVehicle(regNr); // Ändra om till ParkVehicle input name hos seb.
+
+    if (currentSpace == -1)
+    {
+        Console.WriteLine("Vehicle didn´t found. ");
+        return;
+    }
+
+    Console.WriteLine($"The Vehicle is parking {currentSpace}");
+    Console.WriteLine("Type the new parking spot (1-100:) ");
+
+    if (int.TryParse(Console.ReadLine(), out int newSpace) && newSpace > 0 && newSpace <= 100)
+    {
+
+        if (parkingSpaces[newSpace] == null)
+        {
+            parkingSpaces[newSpace] = parkingSpaces[currentSpace];
+            parkingSpaces[currentSpace] = null;
+            Console.WriteLine($"Vehicle move to {newSpace}");
+        }
+        else
+        {
+            Console.WriteLine("The spot is occupied.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Error parking spot.");
+    }
+}
 
 //GetVehicle(); eller RemoveVehicle();
 
 //SearchVecicle();
 
 //ShowParkingSpaces();
+
+
+
+
+
+// Sök fordon inom kodning 
+int FindVehicle(string regNr) // ändra om regNr 
+{
+    for (int i = 1; i < parkingSpaces.Length; i++)
+    {           // Contains() matcha inte 100% Men Equals gör.
+        if (parkingSpaces[i] != null && parkingSpaces[i].Equals(regNr, StringComparison.Ordinal))
+        {
+            return i;
+        }
+    }
+    return -1;
+
+}
+
