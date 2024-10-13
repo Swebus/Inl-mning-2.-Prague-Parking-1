@@ -1,5 +1,7 @@
 
-﻿
+
+
+using System.Text.RegularExpressions;
 
 string[] parkingSpaces = new string[101];
 
@@ -62,61 +64,94 @@ while (!exit) // True nu
 
 void parkVehicle()
 {
-    string vehicleType;
-    Console.Write("Enter 1 for mc or 2 for car: ");
-    string vehicleTypeInput = Console.ReadLine();
-    if (vehicleTypeInput == "1")
+    string vehicleType = "";
+    bool typeCheck = false;
+    while (!typeCheck)
     {
-        vehicleType = "mc";
-    }
-    else if (vehicleTypeInput == "2")
-    {
-        vehicleType = "bl";
-    }
-    else
-    {
-        vehicleType = "0";
+        Console.Write("Enter 1 for mc, 2 for car or 3 to return to main menu: ");
+        string vehicleTypeInput = Console.ReadLine();
+        switch (vehicleTypeInput)
+        {
+            case "1":
+                {
+                    vehicleType = "mc";
+                    typeCheck = true;
+                    break;
+                }
+            case "2":
+                {
+                    vehicleType = "bl";
+                    typeCheck = true;
+                    break;
+                }
+            case "3":
+                {
+                    return;
+                }
+            default:
+                {
+                    Console.WriteLine("Invalid choice, try again!");
+                    break;
+                }
+        }
     }
     Console.Write("Enter vehicle registration number: ");
     string regNumber = Console.ReadLine();
-    if ((regNumber.Length > 10))
-    {
-        Console.WriteLine("Registration number too long! Returning to main menu.");
-        //break; 
-    }
-    string vehicleDesignation = vehicleType + "#" + regNumber;
-    string checkstring;
     for (int i = 1; i < parkingSpaces.Length; i++)
     {
-        checkstring = parkingSpaces[i];
-        if (vehicleDesignation.Contains("mc"))
+        string check = parkingSpaces[i];
+        if (check != null)
         {
-            if (checkstring == null)
+            if (check.Contains(regNumber))
             {
-                parkingSpaces[i] = vehicleDesignation;
-                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
-                break;
-            }
-            else if ((checkstring.Length > 0) && (checkstring.Length <= 15))
-            {
-                parkingSpaces[i] = parkingSpaces[i] + "|" + vehicleDesignation;
-                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
-                break;
+                Console.WriteLine("Vehicle already registered, returning to main menu.");
+                return;
             }
         }
-        else
+    }
+    if ((regNumber.Length > 10) | (regNumber.Length < 1) | (ContainsSpecialCharacters(regNumber)))
+    {
+        Console.WriteLine("Invalid Regstration number, returning to main menu.");
+    }
+    else
+    {
+        string vehicleDesignation = vehicleType + "#" + regNumber;
+        string checkstring;
+        for (int i = 1; i < parkingSpaces.Length; i++)
         {
-            if (checkstring == null)
+            checkstring = parkingSpaces[i];
+            if (vehicleDesignation.Contains("mc"))
             {
-                parkingSpaces[i] = vehicleDesignation;
-                Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
-                break;
+                if (checkstring == null)
+                {
+                    parkingSpaces[i] = vehicleDesignation;
+                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    break;
+                }
+                else if ((checkstring.Length > 0) && (checkstring.Length <= 15))
+                {
+                    parkingSpaces[i] = parkingSpaces[i] + "|" + vehicleDesignation;
+                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    break;
+                }
+            }
+            else 
+            {
+                if (checkstring == null)
+                {
+                    parkingSpaces[i] = vehicleDesignation;
+                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    break;
+                }
             }
         }
     }
 }
 
-
+static bool ContainsSpecialCharacters(string input)
+{
+    return Regex.IsMatch(input, @"[^\p{L}\p{N}]");
+}
 
 
 void MoveVehicle()
