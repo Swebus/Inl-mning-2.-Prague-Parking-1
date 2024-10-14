@@ -30,7 +30,7 @@ while (!exit) // True nu
             MoveVehicle();
             break;
         case "3":
-            //GetVehicle(); eller RemoveVehicle();
+            //getVehicle();
             break;
         case "4":
             //SearchVehicle();
@@ -93,24 +93,20 @@ void parkVehicle()
     }
     Console.Write("Enter vehicle registration number: ");
     string regNumber = Console.ReadLine();
-    for (int i = 1; i < parkingSpaces.Length; i++)
-    {
-        string check = parkingSpaces[i];
-        if (check != null)
-        {
-            if (check.Contains(regNumber))
-            {
-                Console.WriteLine("Vehicle already registered, returning to main menu.");
-                return;
-            }
-        }
-    }
+    
     if ((regNumber.Length > 10) | (regNumber.Length < 1) | (ContainsSpecialCharacters(regNumber)))
     {
         Console.WriteLine("Invalid Regstration number, returning to main menu.");
     }
     else
     {
+        int alreadyParked = alreadyRegistered(regNumber);
+        if (alreadyParked != -1)
+        {
+            Console.WriteLine("Vehicle already registered, returning to main menu.");
+            return;
+        }
+
         string vehicleDesignation = vehicleType + "#" + regNumber;
         string checkstring;
         for (int i = 1; i < parkingSpaces.Length; i++)
@@ -124,7 +120,7 @@ void parkVehicle()
                     Console.WriteLine("\nVehicle parked on parking spot number: {0}", i);
                     break;
                 }
-                else if ((checkstring.Length > 0) && (checkstring.Length <= 15))
+                else if ((!checkstring.Contains("car")) && (!checkstring.Contains("|")))
                 {
                     parkingSpaces[i] = parkingSpaces[i] + "|" + vehicleDesignation;
                     Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
@@ -143,12 +139,10 @@ void parkVehicle()
         }
     }
 }
-
 static bool ContainsSpecialCharacters(string input)
 {
     return Regex.IsMatch(input, @"[^\p{L}\p{N}]");
 }
-
 void MoveVehicle()
 {
     Console.WriteLine("VehicleTyp & registration number: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
@@ -223,49 +217,48 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
 }
 
 
-//GetVehicle(); eller RemoveVehicle();
-
-//void GetVehicle ()
-//Get regNr input- får vara max 10 tecken
-string[] parkingSpaces = new string[100];
-
-int choice = 0; //användbar för användaren park/remove
-
-Console.WriteLine("Enter vehicle(s) registration number");
-string regNumber = Console.ReadLine();
-//fråga efter fordonstyp
-//spara enskilt då två mc kan vara på samma plats
-
-if (regNumber.Length >= 10 || regNumber == null || regNumber == " ")
+void getVehicle()
 {
-    Console.WriteLine("Invalid registration number");
-}
-bool vehicleFound = false;
-//leta igenom alla platser med en forloop om regnr är giltigt (100 platser)
-for (int i = 0; i < parkingSpaces.Length; i++)
-{
-    //kontrollera att fordonet finns på en plats
-    if (parkingSpaces[i] != null && parkingSpaces[i] == regNumber)
+    //void GetVehicle ()
+    //Get regNr input- får vara max 10 tecken
+
+    int choice = 0; //användbar för användaren park/remove
+
+    Console.WriteLine("Enter vehicle(s) registration number");
+    string regNumber = Console.ReadLine();
+    //fråga efter fordonstyp
+    //spara enskilt då två mc kan vara på samma plats
+
+    if (regNumber.Length >= 10 || regNumber == null || regNumber == " ")
     {
-        vehicleFound = true;
-        Console.WriteLine($"Vehicle {regNumber} has been removed from space {i + 1}.");
-        break;// varför +1? för att bli mer användarvänligt då arrays första element på index är 0
+        Console.WriteLine("Invalid registration number");
     }
+    bool vehicleFound = false;
+    //leta igenom alla platser med en forloop om regnr är giltigt (100 platser)
+    for (int i = 0; i < parkingSpaces.Length; i++)
+    {
+        //kontrollera att fordonet finns på en plats
+        if (parkingSpaces[i] != null && parkingSpaces[i] == regNumber)
+        {
+            vehicleFound = true;
+            Console.WriteLine($"Vehicle {regNumber} has been removed from space {i + 1}.");
+            break;// varför +1? för att bli mer användarvänligt då arrays första element på index är 0
+        }
+
+    }
+    // var vehicleFound = 0; för att hitta vehicle i search var för okänd variabeltyp
+    //Ta bort fordonet
+    parkingSpaces = null; //kan vara ett = bara
+                          //fordonet finns inte
+    if (!vehicleFound)
+    {
+        Console.WriteLine("Vehicle not found");
+
+    }
+    //hitta input i parkingSpaces
+    //ta bort det från parkingSpaces
 
 }
-// var vehicleFound = 0; för att hitta vehicle i search var för okänd variabeltyp
-//Ta bort fordonet
-parkingSpaces = null; //kan vara ett = bara
-//fordonet finns inte
-if (!vehicleFound)
-{
-    Console.WriteLine("Vehicle not found");
-
-}
-//hitta input i parkingSpaces
-//ta bort det från parkingSpaces
-
-
 
 
 
@@ -295,7 +288,29 @@ int FindVehicle(string regNumber)
         }  
     }
     return -1;
+}
+int alreadyRegistered(string regNumberCheck) 
+{
+    for (int i = 1; i < parkingSpaces.Length; i++)
+    {           
+        if (parkingSpaces[i] != null)
+        {
+            string[] vehicles = parkingSpaces[i].Split('|');
 
+            foreach (var vehicle in vehicles)
+            {
+                string[] number = vehicle.Split("#");
+                foreach (var letterNumber in number)
+                {
+                    if (letterNumber.Equals(regNumberCheck, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return i;
+                    }
+                }
+            }
+        }  
+    }
+    return -1;
 }
 
 //ShowParkingSpaces();
