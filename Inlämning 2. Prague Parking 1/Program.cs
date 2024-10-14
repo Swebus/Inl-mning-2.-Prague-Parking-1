@@ -1,7 +1,5 @@
 
 
-
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 string[] parkingSpaces = new string[101];
@@ -227,9 +225,9 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
 
 //SearchVecicle();
 
+
 //ShowParkingSpaces();
 
-// Sök fordon inom kodning 
 int FindVehicle(string regNumber) 
 {
     for (int i = 1; i < parkingSpaces.Length; i++)
