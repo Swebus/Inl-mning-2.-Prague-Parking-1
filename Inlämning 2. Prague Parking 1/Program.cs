@@ -1,6 +1,7 @@
 
 
 
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 string[] parkingSpaces = new string[101];
@@ -47,8 +48,6 @@ while (!exit) // True nu
     if (!exit)
     {
 
-        Console.WriteLine("Press any for continue:");
-
         Console.WriteLine("Press any key to continue: ");
 
         Console.ReadLine();
@@ -59,28 +58,25 @@ while (!exit) // True nu
 
 
 
-//ParkVehicle();
-
-
 void parkVehicle()
 {
     string vehicleType = "";
     bool typeCheck = false;
     while (!typeCheck)
     {
-        Console.Write("Enter 1 for mc, 2 for car or 3 to return to main menu: ");
+        Console.Write("Enter 1 for Mc, 2 for Car or 3 to return to main menu: ");
         string vehicleTypeInput = Console.ReadLine();
         switch (vehicleTypeInput)
         {
             case "1":
                 {
-                    vehicleType = "mc";
+                    vehicleType = "mc"; 
                     typeCheck = true;
                     break;
                 }
             case "2":
                 {
-                    vehicleType = "bl";
+                    vehicleType = "car";
                     typeCheck = true;
                     break;
                 }
@@ -125,7 +121,7 @@ void parkVehicle()
                 if (checkstring == null)
                 {
                     parkingSpaces[i] = vehicleDesignation;
-                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    Console.WriteLine("\nVehicle parked on parking spot number: {0}", i);
                     break;
                 }
                 else if ((checkstring.Length > 0) && (checkstring.Length <= 15))
@@ -153,73 +149,107 @@ static bool ContainsSpecialCharacters(string input)
     return Regex.IsMatch(input, @"[^\p{L}\p{N}]");
 }
 
-
 void MoveVehicle()
 {
-    Console.WriteLine("Type Registration number for move vehicle:  ");
-    string regNr = Console.ReadLine();
+    Console.WriteLine("VehicleTyp & registration number: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
+    string regNumber = Console.ReadLine().ToLower();
 
-    int currentSpace = FindVehicle(regNr); // Ändra om till ParkVehicle input name hos seb.
+    // hitta var fordonet är parkerat.
+    int currentSpace = FindVehicle(regNumber); 
 
     if (currentSpace == -1)
     {
         Console.WriteLine("Vehicle didn´t found. ");
         return;
     }
+    
+    //kolla om 2 Mc delar plats.
+    if (parkingSpaces[currentSpace].Contains("|"))
+    {
+        string[] mcArray = parkingSpaces[currentSpace].Split( '|');
 
+        if (mcArray[0].Contains(regNumber))
+        {
+            //flytta första Mc och lämna den andra.
+            MoveSingleVehicle(currentSpace, regNumber, mcArray[1]);
+        }
+        else if (mcArray[1].Contains(regNumber))
+        {
+            // Flytta andra Mc och lämna den första.
+            MoveSingleVehicle(currentSpace, regNumber, mcArray[0]);
+        }
+
+    }
+    else
+    {
+        // 1 fordon i parking flytta.
+        MoveSingleVehicle(currentSpace, regNumber,null);
+    }
+}
+void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehicle)
+{
     Console.WriteLine($"The Vehicle is parking {currentSpace}");
     Console.WriteLine("Type the new parking spot (1-100:) ");
 
     if (int.TryParse(Console.ReadLine(), out int newSpace) && newSpace > 0 && newSpace <= 100)
     {
-
         if (parkingSpaces[newSpace] == null)
         {
-            parkingSpaces[newSpace] = parkingSpaces[currentSpace];
-            parkingSpaces[currentSpace] = null;
-            Console.WriteLine($"Vehicle move to {newSpace}");
+            //flytta fordon till nya platsen.
+            parkingSpaces[newSpace] = regNumber;
+
+            //update gamla platsen till null.
+            if (remainingVehicle == null)
+            {
+                parkingSpaces[currentSpace] = null;
+            }
+            else
+            {
+                // lämna kvar den andra Mc på gamla platsen.
+                parkingSpaces[currentSpace] = remainingVehicle;
+            }
+            Console.WriteLine($"Vehicle moved to spot {newSpace}");
         }
         else
         {
-            Console.WriteLine("The spot is occupied.");
+            Console.WriteLine("The New Parking spot is occupied.");
         }
+
     }
     else
     {
-        Console.WriteLine("Error parking spot.");
+        Console.WriteLine("Invalid parking spot.");
     }
 }
 
-
-//ParkVehicle();
-
-//MoveVehicle();
 
 //GetVehicle(); eller RemoveVehicle();
 
 //SearchVecicle();
 
-
 //ShowParkingSpaces();
 
-
-
-
-
 // Sök fordon inom kodning 
-int FindVehicle(string regNr) // ändra om regNr 
+int FindVehicle(string regNumber) 
 {
     for (int i = 1; i < parkingSpaces.Length; i++)
-    {           // Contains() matcha inte 100% Men Equals gör.
-        if (parkingSpaces[i] != null && parkingSpaces[i].Equals(regNr, StringComparison.Ordinal))
+    {           
+        if (parkingSpaces[i] != null)
         {
-            return i;
-        }
+            string[] vehicles = parkingSpaces[i].Split('|');
+
+            foreach (var vehicle in vehicles)
+            {
+                if (vehicle.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+        }  
     }
     return -1;
 
 }
-
 
 //ShowParkingSpaces();
 
