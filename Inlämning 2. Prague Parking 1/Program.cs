@@ -1,13 +1,10 @@
 
 
 
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-
 string[] parkingSpaces = new string[101];
-
-
 bool exit = false;
+
 while (!exit) // True nu
 {
     Console.WriteLine("Welcome to Prague parking");
@@ -53,9 +50,6 @@ while (!exit) // True nu
         Console.ReadLine();
     }
 }
-
-
-
 
 
 void parkVehicle()
@@ -281,11 +275,6 @@ void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVeh
 
 
 }
-
-
-
-
-
 
 //SearchVecicle();
 
