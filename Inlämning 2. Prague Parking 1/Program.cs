@@ -21,8 +21,8 @@ while (!exit) // True nu
     switch (choice)
     {
         case "1":
-            
             parkVehicle();
+            CheckIn();
             break;
         case "2":
             MoveVehicle();
@@ -31,10 +31,10 @@ while (!exit) // True nu
             //GetVehicle(); eller RemoveVehicle();
             break;
         case "4":
-            //SearchVehicle();
+            SearchVehicle();
             break;
         case "5":
-            //ShowParkingSpaces();
+            ShowParkingSpaces();
             break;
         case "6":
             exit = true; // ändra till false
@@ -221,59 +221,31 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
 }
 
 
-//GetVehicle(); eller RemoveVehicle();
 
-//void GetVehicle ()
-//Get regNr input- får vara max 10 tecken
-string[] parkingSpaces = new string[100];
 
-int choice = 0; //användbar för användaren park/remove
 
-Console.WriteLine("Enter vehicle(s) registration number");
-string regNumber = Console.ReadLine();
-//fråga efter fordonstyp
-//spara enskilt då två mc kan vara på samma plats
 
-if (regNumber.Length >= 10 || regNumber == null || regNumber == " ")
+
+
+
+
+
+void SearchVehicle()
 {
-    Console.WriteLine("Invalid registration number");
-}
-bool vehicleFound = false;
-//leta igenom alla platser med en forloop om regnr är giltigt (100 platser)
-for (int i = 0; i < parkingSpaces.Length; i++)
-{
-    //kontrollera att fordonet finns på en plats
-    if (parkingSpaces[i] != null && parkingSpaces[i] == regNumber)
+    Console.WriteLine("VehicleTyp & registration number: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
+    string regNumber = Console.ReadLine().ToLower();
+
+    int space = FindVehicle(regNumber);
+    if (space == -1)
     {
-        vehicleFound = true;
-        Console.WriteLine($"Vehicle {regNumber} has been removed from space {i + 1}.");
-        break;// varför +1? för att bli mer användarvänligt då arrays första element på index är 0
+        Console.WriteLine("Vehicle didn´t found.");
     }
-
+    else
+    {
+        string foundVehicle = RemoveVehicleType(parkingSpaces[space]);
+        Console.WriteLine($"Vehicle with {foundVehicle} are parking on {space}.");
+    }
 }
-// var vehicleFound = 0; för att hitta vehicle i search var för okänd variabeltyp
-//Ta bort fordonet
-parkingSpaces = null; //kan vara ett = bara
-//fordonet finns inte
-if (!vehicleFound)
-{
-    Console.WriteLine("Vehicle not found");
-
-}
-//hitta input i parkingSpaces
-//ta bort det från parkingSpaces
-
-
-
-
-
-
-
-
-//SearchVecicle();
-
-
-//ShowParkingSpaces();
 
 int FindVehicle(string regNumber) 
 {
@@ -296,5 +268,38 @@ int FindVehicle(string regNumber)
 
 }
 
-//ShowParkingSpaces();
+void ShowParkingSpaces()
+{
+    Console.WriteLine("Parking Space and Vehicle: ");
+    for (int i = 1; i < parkingSpaces.Length; i++)
+    {
+        if (parkingSpaces[i] != null)
+        {
+            string vehicleOnSpace = RemoveVehicleType(parkingSpaces[i]);
+            Console.WriteLine($"Space: {i}: {vehicleOnSpace}");
+        }
+        else
+        {
+            Console.WriteLine($"Space: {i}: Empty");
+        }
+    }
+}
 
+// Ta bort mc#/car# så endast regnr som output.
+static string RemoveVehicleType(string vehicle )
+{
+    return vehicle.Replace("car#", "", StringComparison.OrdinalIgnoreCase)
+                                                     .Replace("mc#", "", StringComparison.OrdinalIgnoreCase);
+
+}
+
+
+
+
+
+void CheckIn()
+{
+    DateTime CheckInTime = DateTime.Now;
+    Console.WriteLine($"Your Check in {CheckInTime}");
+
+}
