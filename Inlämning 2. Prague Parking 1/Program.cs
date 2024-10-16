@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 string[] parkingSpaces = new string[101];
 bool exit = false;
 
-Console.WriteLine("Hej Robert");
+Console.WriteLine("Hej Robert hej hopp");
 
 while (!exit) // True nu
 {
