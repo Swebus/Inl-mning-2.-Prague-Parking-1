@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 string[] parkingSpaces = new string[101];
 bool exit = false;
 
+Console.WriteLine("Hej Robert");
+
 while (!exit) // True nu
 {
     Console.WriteLine("Welcome to Prague parking");
@@ -271,9 +273,6 @@ void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVeh
         }
     }
     
-}
-
-
 }
 
 //SearchVecicle();
