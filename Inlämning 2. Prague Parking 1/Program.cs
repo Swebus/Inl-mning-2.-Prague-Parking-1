@@ -29,7 +29,7 @@ while (!exit) // True nu
             MoveVehicle();
             break;
         case "3":
-            //getVehicle();
+            RemoveVehicle();
             break;
         case "4":
             //SearchVehicle();
