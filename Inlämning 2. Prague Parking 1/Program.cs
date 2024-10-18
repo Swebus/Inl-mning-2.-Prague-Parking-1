@@ -1,28 +1,20 @@
-
-
-
 using System.Text.RegularExpressions;
 string[] parkingSpaces = new string[101];
 bool exit = false;
-
-Console.WriteLine("Hej Robert hej hopp");
-
-while (!exit) // True nu
+string typeHolder;
+while (!exit)
 {
     Console.WriteLine("Welcome to Prague parking");
     Console.WriteLine("1. Park Vechicle.");
     Console.WriteLine("2. Move Vechicle.");
     Console.WriteLine("3. Get Vechicle.");
     Console.WriteLine("4. Search Vechicle.");
-    Console.WriteLine("5. Show Vechicle.");
+    Console.WriteLine("5. Show Parkingspaces.");
     Console.WriteLine("6. Exit.");
-
     string choice = Console.ReadLine();
-
     switch (choice)
     {
         case "1":
-            
             parkVehicle();
             break;
         case "2":
@@ -32,13 +24,13 @@ while (!exit) // True nu
             RemoveVehicle();
             break;
         case "4":
-            //SearchVehicle();
+            SearchVehicle();
             break;
         case "5":
-            //ShowParkingSpaces();
+            ShowParkingSpaces();
             break;
         case "6":
-            exit = true; // ändra till false
+            exit = true;
             break;
         default:
             Console.WriteLine("Invalid choice, try again.");
@@ -46,17 +38,15 @@ while (!exit) // True nu
     }
     if (!exit)
     {
-
-        Console.WriteLine("Press any key to continue: ");
-
+        Console.WriteLine("\n\nPress any key to continue: ");
         Console.ReadLine();
     }
-    PairSingleMcs();
+    PairSingleMcs();           //Körs efter varje loop av huvudmenyn för att se om det finns 2 ensamma Mc
 }
 void parkVehicle()     // Metod för att registrera ett fordon på en parkeringsplats
 {
     string vehicleType = "";                 //För att vehicleType inte kan vara null
-    bool typeExit = false;                  
+    bool typeExit = false;
     while (!typeExit)                        // Loop för val av fordonstyp
     {
         Console.Write("Enter 1 for Mc, 2 for Car or 3 to return to main menu: ");
@@ -65,7 +55,7 @@ void parkVehicle()     // Metod för att registrera ett fordon på en parkerings
         {
             case "1":
                 {
-                    vehicleType = "mc"; 
+                    vehicleType = "mc";
                     typeExit = true;
                     break;
                 }
@@ -88,7 +78,7 @@ void parkVehicle()     // Metod för att registrera ett fordon på en parkerings
     }
     Console.Write("Enter vehicle registration number: ");
     string regNumber = Console.ReadLine();
-    
+
     //vvv Kollar ifall inputen är för lång, för kort, eller har otillåtna tecken vvv\\
     if ((regNumber.Length > 10) | (regNumber.Length < 1) | (ContainsSpecialCharacters(regNumber)))
     {
@@ -97,52 +87,54 @@ void parkVehicle()     // Metod för att registrera ett fordon på en parkerings
     else
     {
         //vvv skickar input för att kolla om den redan finns vvv\\
-        int alreadyParked = AlreadyRegistered(regNumber);
+        int alreadyParked = FindVehicle(regNumber);
         if (alreadyParked != -1)
         {
             Console.WriteLine("Vehicle already registered, returning to main menu.");
             return;
         }
-        //vvv Lägger ihop fordonstyp och regnummervvv\\
+        //vvv Lägger ihop fordonstyp och regnummer vvv\\
         string vehicleDesignation = vehicleType + "#" + regNumber;
         string checkstring;
         for (int i = 1; i < parkingSpaces.Length; i++)
         {
             checkstring = parkingSpaces[i];
-            if (vehicleDesignation.Contains("mc"))
+            if (vehicleDesignation.Contains("mc"))    //Om det är en Mc man vill parkera
             {
-                if (checkstring == null)
+                if (checkstring == null)   //Är platsen tom? 
                 {
                     parkingSpaces[i] = vehicleDesignation;
-                    Console.WriteLine("\nVehicle parked on parking spot number: {0}", i);
+                    Console.WriteLine("\nVehicle registered to parking spot number: {0}", i);
                     break;
                 }
-                else if ((!checkstring.Contains("car")) && (!checkstring.Contains("|")))
+                //vvv Om det inte står en bil och inte två Mc vvv\\
+                else if ((!checkstring.Contains("car")) && (!checkstring.Contains("|")))  
                 {
                     parkingSpaces[i] = parkingSpaces[i] + "|" + vehicleDesignation;
-                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    Console.WriteLine("Vehicle registered to parking spot number: {0}", i);
                     break;
                 }
             }
-            else 
+            else       //Om det är en bil man vill parkera
             {
                 if (checkstring == null)
                 {
                     parkingSpaces[i] = vehicleDesignation;
-                    Console.WriteLine("Vehicle parked on parking spot number: {0}", i);
+                    Console.WriteLine("Vehicle registered to parking spot number: {0}", i);
                     break;
                 }
             }
         }
     }
 }
-static bool ContainsSpecialCharacters(string input)
+bool ContainsSpecialCharacters(string input)
 {
-    return Regex.IsMatch(input, @"[^\p{L}\p{N}]");
+    return Regex.IsMatch(input, @"[^\p{L}\p{N}]");  //\p{L} representerar alla bokstäver och \p{N} alla siffror
 }
 void MoveVehicle()
 {
-    Console.WriteLine("VehicleTyp & registration number: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
+    typeHolder = "";
+    Console.WriteLine("Registration number to move: ");
     string regNumber = Console.ReadLine().ToLower();
 
     // hitta var fordonet är parkerat.
@@ -153,42 +145,43 @@ void MoveVehicle()
         Console.WriteLine("Vehicle not found. ");
         return;
     }
-    
+    string moveFinal = typeHolder + "#" + regNumber;
     //kolla om 2 Mc delar plats.
     if (parkingSpaces[currentSpace].Contains("|"))
     {
         string[] mcArray = parkingSpaces[currentSpace].Split( '|');
 
-        if (mcArray[0].Contains(regNumber))
+        if (mcArray[0].Contains(moveFinal))
         {
             //flytta första Mc och lämna den andra.
-            MoveSingleVehicle(currentSpace, regNumber, mcArray[1]);
+            MoveSingleVehicle(currentSpace, moveFinal, mcArray[1]);
         }
-        else if (mcArray[1].Contains(regNumber))
+        else if (mcArray[1].Contains(moveFinal))
         {
             // Flytta andra Mc och lämna den första.
-            MoveSingleVehicle(currentSpace, regNumber, mcArray[0]);
+            MoveSingleVehicle(currentSpace, moveFinal, mcArray[0]);
         }
 
     }
     else
     {
         // 1 fordon i parking flytta.
-        MoveSingleVehicle(currentSpace, regNumber,null);
+        MoveSingleVehicle(currentSpace, moveFinal,null);
     }
 }
-void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehicle)
+void MoveSingleVehicle(int currentSpace, string moveFinal, string remainingVehicle)
 {
-    Console.WriteLine($"The Vehicle is parking {currentSpace}");
-    Console.WriteLine("Type the new parking spot (1-100:) ");
+   
+    Console.WriteLine($"The Vehicle is parked at spot {currentSpace}");
+    Console.Write("Type the new parking spot (1-100):  ");
 
     if (int.TryParse(Console.ReadLine(), out int newSpace) && newSpace > 0 && newSpace <= 100)
     {
-        if (parkingSpaces[newSpace] == null)
+        string newSpaceCheck = parkingSpaces[newSpace];
+        if (parkingSpaces[newSpace] == null) 
         {
             //flytta fordon till nya platsen.
-            parkingSpaces[newSpace] = regNumber;
-
+            parkingSpaces[newSpace] = moveFinal;
             //update gamla platsen till null.
             if (remainingVehicle == null)
             {
@@ -201,6 +194,15 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
             }
             Console.WriteLine($"Vehicle moved to spot {newSpace}");
         }
+        else if (parkingSpaces[newSpace].Contains("|"))
+        {
+            Console.WriteLine("The New Parking spot is occupied.");
+        }
+        else if (parkingSpaces[newSpace].Contains("mc"))
+        {
+                parkingSpaces[newSpace] = parkingSpaces[newSpace] + "|" + moveFinal;
+        }
+        
         else
         {
             Console.WriteLine("The New Parking spot is occupied.");
@@ -214,7 +216,7 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
 }
 void RemoveVehicle()
 {
-    Console.WriteLine("Enter Vehicle type & registration number to remove: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
+    Console.Write("Enter Vehicle registration number to retrieve: ");
     string regNumber = Console.ReadLine().ToLower();
 
     // Hitta var fordonet är parkerat
@@ -251,7 +253,7 @@ void RemoveVehicle()
 void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVehicle)
 {
     // Bekräfta borttagningen
-    Console.WriteLine($"The vehicle {regNumber} is parked at spot {currentSpace}. Do you want to remove it? (y/n)");
+    Console.Write($"The vehicle {regNumber} is parked at spot {currentSpace}. Do you want to remove it? (y/n): ");
     string confirmation = Console.ReadLine().ToLower();
 
     if (confirmation == "y")
@@ -270,145 +272,101 @@ void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVeh
             Console.WriteLine($"Vehicle {regNumber} removed. {remainingVehicle} remains at spot {currentSpace}.");
         }
     }
-    
+    else
+    {
+        Console.WriteLine("Vehicle remains parked.");
+    }
 }
-
-
-
-
-
 void SearchVehicle()
 
 {
     Console.WriteLine("Enter the vehicle registration number to search:");
-string regNumber = Console.ReadLine();
+    string regNumber = Console.ReadLine();
 
-int vehiclePosition = FindVehicle(regNumber);
-if (vehiclePosition != -1)
-{
-    Console.WriteLine($"Vehicle found at parking spot number: {vehiclePosition}");
-}
-else
-{
-    Console.WriteLine("Vehicle not found.");
-}
-
-   
-}
-6
-void ShowParkingSpaces()
-
-{
-    Console.WriteLine("Current parking spaces status:");
-    for (int i = 1; i < parkingSpaces.Length; i++)
+    int vehiclePosition = FindVehicle(regNumber);
+    if (vehiclePosition != -1)
     {
-        if (parkingSpaces[i] == null)
+        Console.WriteLine($"Vehicle is parked at parking spot number: {vehiclePosition}.");
+    }
+    else
+    {
+        Console.WriteLine("Vehicle not found, returning to main menu.");
+    }
+}
+void ShowParkingSpaces()
+{
+    int rowCount = 0;
+    Console.WriteLine("Current parkinglot status: \n");
+    for (int i = 1; i < parkingSpaces.Length; i++)         //Loopar igenom alla platser
+    {
+        if ((rowCount % 5 == 0) && (rowCount != 0))     //För att byta rad var 5e plats 
         {
-            Console.WriteLine($"Spot {i}: Empty");
+            Console.WriteLine("--");
+        }
+        Console.Write("--");
+        if (parkingSpaces[i] == null)                  
+        {
+            Console.Write($" Spot {i}: Empty ");
         }
         else
         {
-            Console.WriteLine($"Spot {i}: {parkingSpaces[i]}");
+            Console.Write($" Spot {i}: {parkingSpaces[i]} ");
         }
+        rowCount++;
     }
 }
-
-
-
-// Sök fordon inom kodning 
-int FindVehicle(string regNumber) 
+int FindVehicle(string regNumber)
 {
     for (int i = 1; i < parkingSpaces.Length; i++)
-    {           
+    {
         if (parkingSpaces[i] != null)
         {
-            string[] vehicles = parkingSpaces[i].Split('|');
-
-            //foreach (var vehicle in vehicles)
-            //{
-            //    if (vehicle.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        return i;
-            //    }
-            //}
-
-            //^^^^ Med detta behövde man skriva "mc#aaa111" för att den skulle hitta fordonet.
-            //vvv Med detta behöver man bara skriva "aaa111" ;)
-
+            string[] vehicles = parkingSpaces[i].Split('|');    //separerar fordonen om det finns mer än ett 
             foreach (var vehicle in vehicles)
             {
-                string[] number = vehicle.Split("#");
+                string[] number = vehicle.Split("#");        //Separerar fordonstyp från regnummer
+                typeHolder = number[0];                      //Sparar fordonstypen för att kunna stoppa tillbaka
+                                                             //den när MoveVehicle() körs
                 foreach (var letterNumber in number)
                 {
+                    int j = 1;
                     if (letterNumber.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
                     {
-                        return i;
+                        return i;         //returnerar indexet om fordonet hittas
                     }
                 }
             }
-        }  
+        }
     }
-    return -1;
+    return -1;   //returnerar -1 om det inte hittas
 }
-int AlreadyRegistered(string regNumberCheck) 
-{
-    for (int i = 1; i < parkingSpaces.Length; i++)
-    {           
-        if (parkingSpaces[i] != null)
-        {
-            string[] vehicles = parkingSpaces[i].Split('|');
-
-            foreach (var vehicle in vehicles)
-            {
-                string[] number = vehicle.Split("#");
-                foreach (var letterNumber in number)
-                {
-                    if (letterNumber.Equals(regNumberCheck, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return i;
-                    }
-                }
-            }
-        }  
-    }
-    return -1;
-}
-
-//ShowParkingSpaces();
-
 void PairSingleMcs()
 {
-    bool exitPair = false;
-    while (!exitPair)
+    for (int i = 1; i < parkingSpaces.Length; i++)     //Loop för att hitta första ensamma Mc
     {
-        for (int i = 0; i < parkingSpaces.Length; i++)
+        if (parkingSpaces[i] != null)
         {
-            if (parkingSpaces[i] != null)
+            string singleCheck = parkingSpaces[i];
+            if (!singleCheck.Contains("|") && (singleCheck.Contains("mc")))
             {
-                string singleCheck = parkingSpaces[i];
-                if (!singleCheck.Contains("|") && singleCheck.Contains("mc"))
+                for (int j = i + 2; j < parkingSpaces.Length; j++)       //Loop för att hitta andra ensamma Mc 
                 {
-                    for (int j = i + 1; j < parkingSpaces.Length; j++)
+                    if (parkingSpaces[j] != null)
                     {
-                        if (parkingSpaces[j] != null)
+                        string singelCheck2 = parkingSpaces[j];
+                        if ((!parkingSpaces[j].Contains("|")) && (parkingSpaces[j].Contains("mc")))
                         {
-
-                            string singelCheck2 = parkingSpaces[j];
-                            if ((!parkingSpaces[j].Contains("|")) && (parkingSpaces[j].Contains("mc")))
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("There are singel Motorcycles on parking spots {0} and {1}.", i, j);
-                                Console.WriteLine("Please move the one on number {0} to number {1}!", j, i);
-                                Console.ResetColor();
-                                Console.WriteLine("\n\n\n");
-                                parkingSpaces[i] = parkingSpaces[i] + "|" + parkingSpaces[j];
-                            }
-                            
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("There are singel Motorcycles on parking spots {0} and {1}.", i, j);
+                            Console.WriteLine("Please move the one on number {0} to number {1}!", j, i);
+                            Console.ResetColor();
+                            Console.WriteLine("\n\n\n");
+                            parkingSpaces[i] = parkingSpaces[i] + "|" + parkingSpaces[j];   //parar ihop dem
+                            parkingSpaces[j] = null;                         //Och tömmer den andra platsen
                         }
                     }
                 }
             }
-            exitPair = true;
         }
     }
 }
