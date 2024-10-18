@@ -53,8 +53,6 @@ while (!exit) // True nu
     }
     PairSingleMcs();
 }
-
-
 void parkVehicle()     // Metod för att registrera ett fordon på en parkeringsplats
 {
     string vehicleType = "";                 //För att vehicleType inte kan vara null
