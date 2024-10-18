@@ -264,10 +264,43 @@ void getVehicle()
 
 
 
+void SearchVehicle()
 
-//SearchVecicle();
+{
+    Console.WriteLine("Enter the vehicle registration number to search:");
+string regNumber = Console.ReadLine();
 
-//ShowParkingSpaces();
+int vehiclePosition = FindVehicle(regNumber);
+if (vehiclePosition != -1)
+{
+    Console.WriteLine($"Vehicle found at parking spot number: {vehiclePosition}");
+}
+else
+{
+    Console.WriteLine("Vehicle not found.");
+}
+
+   
+}
+6
+void ShowParkingSpaces()
+
+{
+    Console.WriteLine("Current parking spaces status:");
+    for (int i = 1; i < parkingSpaces.Length; i++)
+    {
+        if (parkingSpaces[i] == null)
+        {
+            Console.WriteLine($"Spot {i}: Empty");
+        }
+        else
+        {
+            Console.WriteLine($"Spot {i}: {parkingSpaces[i]}");
+        }
+    }
+}
+
+
 
 // Sök fordon inom kodning 
 int FindVehicle(string regNumber) 
