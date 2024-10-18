@@ -51,14 +51,15 @@ while (!exit) // True nu
 
         Console.ReadLine();
     }
+    PairSingleMcs();
 }
 
 
-void parkVehicle()
+void parkVehicle()     // Metod för att registrera ett fordon på en parkeringsplats
 {
-    string vehicleType = "";
-    bool typeCheck = false;
-    while (!typeCheck)
+    string vehicleType = "";                 //För att vehicleType inte kan vara null
+    bool typeExit = false;                  
+    while (!typeExit)                        // Loop för val av fordonstyp
     {
         Console.Write("Enter 1 for Mc, 2 for Car or 3 to return to main menu: ");
         string vehicleTypeInput = Console.ReadLine();
@@ -67,13 +68,13 @@ void parkVehicle()
             case "1":
                 {
                     vehicleType = "mc"; 
-                    typeCheck = true;
+                    typeExit = true;
                     break;
                 }
             case "2":
                 {
                     vehicleType = "car";
-                    typeCheck = true;
+                    typeExit = true;
                     break;
                 }
             case "3":
@@ -90,19 +91,21 @@ void parkVehicle()
     Console.Write("Enter vehicle registration number: ");
     string regNumber = Console.ReadLine();
     
+    //vvv Kollar ifall inputen är för lång, för kort, eller har otillåtna tecken vvv\\
     if ((regNumber.Length > 10) | (regNumber.Length < 1) | (ContainsSpecialCharacters(regNumber)))
     {
         Console.WriteLine("Invalid Regstration number, returning to main menu.");
     }
     else
     {
-        int alreadyParked = alreadyRegistered(regNumber);
+        //vvv skickar input för att kolla om den redan finns vvv\\
+        int alreadyParked = AlreadyRegistered(regNumber);
         if (alreadyParked != -1)
         {
             Console.WriteLine("Vehicle already registered, returning to main menu.");
             return;
         }
-
+        //vvv Lägger ihop fordonstyp och regnummervvv\\
         string vehicleDesignation = vehicleType + "#" + regNumber;
         string checkstring;
         for (int i = 1; i < parkingSpaces.Length; i++)
@@ -211,8 +214,6 @@ void MoveSingleVehicle(int currentSpace, string regNumber, string remainingVehic
         Console.WriteLine("Invalid parking spot.");
     }
 }
-
-
 void RemoveVehicle()
 {
     Console.WriteLine("Enter Vehicle type & registration number to remove: \n\u001b[90m(Car#aaa111 or Mc#aaa123)\u001b[0m");
@@ -249,7 +250,6 @@ void RemoveVehicle()
         RemoveSingleVehicle(currentSpace, regNumber, null);
     }
 }
-
 void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVehicle)
 {
     // Bekräfta borttagningen
@@ -274,7 +274,6 @@ void RemoveSingleVehicle(int currentSpace, string regNumber, string remainingVeh
     }
     
 }
-
 //SearchVecicle();
 
 //ShowParkingSpaces();
@@ -288,18 +287,33 @@ int FindVehicle(string regNumber)
         {
             string[] vehicles = parkingSpaces[i].Split('|');
 
+            //foreach (var vehicle in vehicles)
+            //{
+            //    if (vehicle.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        return i;
+            //    }
+            //}
+
+            //^^^^ Med detta behövde man skriva "mc#aaa111" för att den skulle hitta fordonet.
+            //vvv Med detta behöver man bara skriva "aaa111" ;)
+
             foreach (var vehicle in vehicles)
             {
-                if (vehicle.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
+                string[] number = vehicle.Split("#");
+                foreach (var letterNumber in number)
                 {
-                    return i;
+                    if (letterNumber.Equals(regNumber, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return i;
+                    }
                 }
             }
         }  
     }
     return -1;
 }
-int alreadyRegistered(string regNumberCheck) 
+int AlreadyRegistered(string regNumberCheck) 
 {
     for (int i = 1; i < parkingSpaces.Length; i++)
     {           
@@ -325,3 +339,39 @@ int alreadyRegistered(string regNumberCheck)
 
 //ShowParkingSpaces();
 
+void PairSingleMcs()
+{
+    bool exitPair = false;
+    while (!exitPair)
+    {
+        for (int i = 0; i < parkingSpaces.Length; i++)
+        {
+            if (parkingSpaces[i] != null)
+            {
+                string singleCheck = parkingSpaces[i];
+                if (!singleCheck.Contains("|") && singleCheck.Contains("mc"))
+                {
+                    for (int j = i + 1; j < parkingSpaces.Length; j++)
+                    {
+                        if (parkingSpaces[j] != null)
+                        {
+
+                            string singelCheck2 = parkingSpaces[j];
+                            if ((!parkingSpaces[j].Contains("|")) && (parkingSpaces[j].Contains("mc")))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("There are singel Motorcycles on parking spots {0} and {1}.", i, j);
+                                Console.WriteLine("Please move the one on number {0} to number {1}!", j, i);
+                                Console.ResetColor();
+                                Console.WriteLine("\n\n\n");
+                                parkingSpaces[i] = parkingSpaces[i] + "|" + parkingSpaces[j];
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            exitPair = true;
+        }
+    }
+}
