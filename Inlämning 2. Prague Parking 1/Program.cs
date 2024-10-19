@@ -221,7 +221,6 @@ void RemoveVehicle()
 
     // Hitta var fordonet är parkerat
     int currentSpace = FindVehicle(regNumber);
-
     if (currentSpace == -1)
     {
         Console.WriteLine("Vehicle not found.");
