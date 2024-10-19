@@ -15,7 +15,7 @@ while (!exit)
     switch (choice)
     {
         case "1":
-            parkVehicle();
+            ParkVehicle();
             break;
         case "2":
             MoveVehicle();
@@ -43,7 +43,7 @@ while (!exit)
     }
     PairSingleMcs();           //Körs efter varje loop av huvudmenyn för att se om det finns 2 ensamma Mc
 }
-void parkVehicle()     // Metod för att registrera ett fordon på en parkeringsplats
+void ParkVehicle()     // Metod för att registrera ett fordon på en parkeringsplats
 {
     string vehicleType = "";                 //För att vehicleType inte kan vara null
     bool typeExit = false;
